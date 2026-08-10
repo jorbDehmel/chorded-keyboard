@@ -1,4 +1,5 @@
 #include <Keyboard.h>
+#include <schema.hpp>
 
 const static int pinky_up_pin = 13;
 const static int pinky_down_pin = 12;
@@ -25,12 +26,6 @@ void setup() {
   Keyboard.begin();
 }
 
-enum FingerState { UP, OFF, DOWN };
-
-struct BoardState {
-  FingerState pinky, ring, middle, pointer, thumb;
-};
-
 // Given the current state, return what key should
 // be sent, or -1 if none. There are 3^4 * 2 chords,
 // since the thumb must always engage and the other
@@ -38,7 +33,7 @@ struct BoardState {
 // "0UD0U" here means pinky off, ring up, middle
 // down, pointer off, thumb up. Read it like a left
 // hand.
-int get_key(const struct BoardState &_state) {
+int get_key(const struct Chord &_state) {
   switch (_state.thumb) {
   case OFF:
     return -1;
@@ -424,7 +419,7 @@ int get_key(const struct BoardState &_state) {
 }
 
 void loop() {
-  BoardState state;
+  Chord state;
   state.pinky = state.ring = state.middle = state.pointer =
       state.thumb = OFF;
 
@@ -454,7 +449,7 @@ void loop() {
     state.thumb = DOWN;
   }
 
-  const int key = get_key(state);
+  const int key = default_schema.get_key(state);
   if (key > 0) {
     digitalWrite(light_pin, HIGH);
     Keyboard.press(key);

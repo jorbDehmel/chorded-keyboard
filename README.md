@@ -47,7 +47,7 @@ button (for instance, "`D00D D`" for "j"). These can be combined
 
  Chord    | Character
 ----------|-----------------------------------------------------
- `0000 U` | 0
+ `0000 U` | tab
  `000U U` | 8
  `000D U` | right arrow
  `00U0 U` | 4
@@ -75,7 +75,7 @@ button (for instance, "`D00D D`" for "j"). These can be combined
  `00DD D` | g
  `0U00 D` | w
  `0UU0 D` | backspace
- `0UUU D` | tab
+ `0UUU D` | 0
  `0UD0 D` | c
  `0D00 D` | s
  `U000 D` | q
