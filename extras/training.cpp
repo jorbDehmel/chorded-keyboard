@@ -1,4 +1,4 @@
-#include "../schema.hpp"
+#include "../ChordedKeyboard/schema.hpp"
 #include <cctype>
 #include <cstdio>
 #include <filesystem>

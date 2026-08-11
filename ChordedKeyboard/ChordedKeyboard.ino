@@ -1,5 +1,5 @@
 #include <Keyboard.h>
-#include <schema.hpp>
+#include "schema.hpp"
 
 const static int pinky_up_pin = 13;
 const static int pinky_down_pin = 12;
@@ -14,15 +14,18 @@ const static int thumb_down_pin = 34;
 const static int light_pin = 23;
 
 void setup() {
-  for (const auto &pin :
-       {pinky_up_pin, pinky_down_pin, ring_up_pin,
-        ring_down_pin, middle_up_pin, middle_down_pin,
-        pointer_up_pin, pointer_down_pin, thumb_up_pin,
-        thumb_down_pin}) {
-    pinMode(pin, INPUT);
-  }
-  pinMode(light_pin, OUTPUT);
+  pinMode(pinky_up_pin, INPUT_PULLUP);
+  pinMode(pinky_down_pin, INPUT_PULLUP);
+  pinMode(ring_up_pin, INPUT_PULLUP);
+  pinMode(ring_down_pin, INPUT_PULLUP);
+  pinMode(middle_up_pin, INPUT_PULLUP);
+  pinMode(middle_down_pin, INPUT_PULLUP);
+  pinMode(pointer_up_pin, INPUT_PULLUP);
+  pinMode(pointer_down_pin, INPUT_PULLUP);
+  pinMode(thumb_up_pin, INPUT_PULLUP);
+  pinMode(thumb_down_pin, INPUT_PULLUP);
 
+  pinMode(light_pin, OUTPUT);
   Keyboard.begin();
 }
 

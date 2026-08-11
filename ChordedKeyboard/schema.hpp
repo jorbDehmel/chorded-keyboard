@@ -4,16 +4,15 @@
 
 #pragma once
 
-#include <initializer_list>
-#include <string>
-
 // Needed since we want to call this from both Arduino and real
 // C++
-#if not __has_include("Keyboard.h")
+#if not __has_include(<Keyboard.h>)
 #define NOT_ARDUINO
 #include <cassert>
 #include <filesystem>
 #include <fstream>
+using List = std::list;
+using String = std::string;
 const static int KEY_TAB = -1;
 const static int KEY_RIGHT_ARROW = -2;
 const static int KEY_UP_ARROW = -3;
@@ -24,16 +23,25 @@ const static int KEY_LEFT_ARROW = -7;
 const static int KEY_CAPS_LOCK = -8;
 const static int KEY_RETURN = -9;
 const static int KEY_BACKSPACE = -10;
+
+#else
+#include <Keyboard.h>
 #endif
 
 /// The state of a single finger on the chorded keyboard
 enum FingerState { UP, OFF, DOWN };
 
+/// I miss real C++
+struct ChordKeyPair {
+  String first;
+  int second;
+};
+
 /// A state of a chorded keyboard
 struct Chord {
   FingerState pinky, ring, middle, pointer, thumb;
 
-  static Chord from_str(const std::string &_s) {
+  static Chord from_str(const String &_s) {
     Chord out;
     out.pinky = _s[0] == 'U' ? UP : _s[0] == 'D' ? DOWN : OFF;
     out.ring = _s[1] == 'U' ? UP : _s[1] == 'D' ? DOWN : OFF;
@@ -43,8 +51,10 @@ struct Chord {
     return out;
   }
 
-  std::string to_string() const noexcept {
-    std::string out;
+#ifdef NOT_ARDUINO
+
+  String to_string() const noexcept {
+    String out;
     out.push_back("U0D"[pinky]);
     out.push_back("U0D"[ring]);
     out.push_back("U0D"[middle]);
@@ -52,6 +62,8 @@ struct Chord {
     out.push_back("U0D"[thumb]);
     return out;
   }
+
+#endif
 
   static Chord from_int(const size_t &_i) {
     size_t i = _i;
@@ -79,11 +91,9 @@ class Schema {
 public:
   /// Initialize from a list of pairs where each pair maps a
   /// chord to its key. Do NOT include the null chord here!
-  Schema(
-      const std::initializer_list<std::pair<std::string, int>>
-          &_table) {
-    for (const auto &p : _table) {
-      data[Chord::from_str(p.first).to_int() - 1] = p.second;
+  Schema(const ChordKeyPair *const _table, const size_t &_s) {
+    for (size_t i = 0; i < _s; ++i) {
+      data[Chord::from_str(_table[i].first).to_int() - 1] = _table[i].second;
     }
   }
 
@@ -122,7 +132,7 @@ protected:
   int data[data_len];
 };
 
-const static Schema default_schema = {
+const static ChordKeyPair l[] = {
     {"0000U", KEY_TAB},
     {"000UU", '8'},
     {"000DU", KEY_RIGHT_ARROW},
@@ -171,3 +181,5 @@ const static Schema default_schema = {
     {"DUDUD", 'm'},
     {"DD00D", 'l'},
 };
+
+const static Schema default_schema(l, sizeof(l) / sizeof(l[0]));

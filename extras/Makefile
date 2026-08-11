@@ -1,5 +1,5 @@
 CPP = g++ -pedantic -Wall -std=c++20 -O3 -g
-HEADERS = ../schema.hpp
+HEADERS = ../ChordedKeyboard/schema.hpp
 
 .PHONY:	all
 all:	training.out
