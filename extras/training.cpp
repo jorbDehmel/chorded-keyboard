@@ -5,6 +5,105 @@
 #include <iostream>
 #include <random>
 
+bool right_handed_mode = false;
+
+void print_chord(const Chord &_c) {
+  std::cout << "Chord:\n";
+
+  // Up row
+  if (!right_handed_mode) {
+    size_t i = 0;
+    for (const auto &cur :
+         {_c.pinky, _c.ring, _c.middle, _c.pointer, _c.thumb}) {
+      if (i == 4) {
+        std::cout << ' ';
+      }
+      std::cout << (cur == UP ? 'U' : '.');
+      ++i;
+    }
+  } else {
+    size_t i = 0;
+    for (const auto &cur :
+         {_c.pinky, _c.ring, _c.middle, _c.pointer, _c.thumb}) {
+      if (i == 1) {
+        std::cout << ' ';
+      }
+      std::cout << (cur == UP ? 'U' : '.');
+      ++i;
+    }
+  }
+  std::cout << "\n";
+
+  // Down row
+  if (!right_handed_mode) {
+    size_t i = 0;
+    for (const auto &cur :
+         {_c.pinky, _c.ring, _c.middle, _c.pointer, _c.thumb}) {
+      if (i == 4) {
+        std::cout << ' ';
+      }
+      std::cout << (cur == DOWN ? 'D' : '.');
+      ++i;
+    }
+  } else {
+    size_t i = 0;
+    for (const auto &cur :
+         {_c.pinky, _c.ring, _c.middle, _c.pointer, _c.thumb}) {
+      if (i == 1) {
+        std::cout << ' ';
+      }
+      std::cout << (cur == DOWN ? 'D' : '.');
+      ++i;
+    }
+  }
+
+  std::cout << '\n';
+}
+
+void print_key(const int &_k) {
+  std::cout << "Key: ";
+  switch (_k) {
+  case KEY_TAB:
+    std::cout << "tab";
+    break;
+  case KEY_RIGHT_ARROW:
+    std::cout << "right arrow";
+    break;
+  case KEY_UP_ARROW:
+    std::cout << "up arrow";
+    break;
+  case KEY_DOWN_ARROW:
+    std::cout << "down arrow";
+    break;
+  case KEY_HOME:
+    std::cout << "home / windows";
+    break;
+  case KEY_ESC:
+    std::cout << "escape";
+    break;
+  case KEY_LEFT_ARROW:
+    std::cout << "left arrow";
+    break;
+  case KEY_CAPS_LOCK:
+    std::cout << "caps lock";
+    break;
+  case KEY_RETURN:
+    std::cout << "return / enter";
+    break;
+  case KEY_BACKSPACE:
+    std::cout << "backspace";
+    break;
+  default:
+    if (std::isprint(_k)) {
+      std::cout << '\'' << (char)_k << '\'';
+    } else {
+      std::cout << _k;
+    }
+    break;
+  }
+  std::cout << '\n';
+}
+
 int main(int c, char *v[]) {
   std::cout
       << "This is a training program for Jordan Dehmel's "
@@ -15,8 +114,22 @@ int main(int c, char *v[]) {
          "chords being displayed) until it is halted. To exit, "
          "use CTRL+C.\n\n";
 
+  bool saw_fp = false;
+  std::filesystem::path fp;
+  for (int i = 1; i < c; ++i) {
+    const std::string arg = v[i];
+    if (arg == "--lefty") {
+      right_handed_mode = false;
+    } else if (arg == "--righty") {
+      right_handed_mode = true;
+    } else {
+      saw_fp = true;
+      fp = arg;
+    }
+  }
+
   const Schema s =
-      c > 1 ? Schema::from_file(v[1]) : default_schema;
+      saw_fp ? Schema::from_file(fp) : default_schema;
 
   // Note: This is inclusive on both sides
   std::uniform_int_distribution<size_t> range(1,
@@ -33,10 +146,12 @@ int main(int c, char *v[]) {
     const Chord chord = Chord::from_int(i);
     const int key = s.get_key(chord);
 
+    std::cout << '\n';
+    print_chord(chord);
+    print_key(key);
+
     if (std::isprint(key)) {
       // Wait until the user inputs that key
-      std::cout << '\'' << (char)key << "' with chord "
-                << chord.to_string() << '\n';
       while (true) {
         const char obs = std::cin.get();
         if (obs == key) {
@@ -44,9 +159,10 @@ int main(int c, char *v[]) {
         }
       }
     } else {
-      std::cout << "(skipping unprintable " << key
-                << " with chord " << chord.to_string() << ")\n";
+      std::cout << "(enter any key to advance)\n";
+      std::cin.get();
     }
+    std::cin.ignore(999, '\n');
   }
 
   return 0;

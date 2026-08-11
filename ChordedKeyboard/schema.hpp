@@ -11,7 +11,6 @@
 #include <cassert>
 #include <filesystem>
 #include <fstream>
-using List = std::list;
 using String = std::string;
 const static int KEY_TAB = -1;
 const static int KEY_RIGHT_ARROW = -2;
@@ -23,7 +22,6 @@ const static int KEY_LEFT_ARROW = -7;
 const static int KEY_CAPS_LOCK = -8;
 const static int KEY_RETURN = -9;
 const static int KEY_BACKSPACE = -10;
-
 #else
 #include <Keyboard.h>
 #endif
@@ -31,7 +29,7 @@ const static int KEY_BACKSPACE = -10;
 /// The state of a single finger on the chorded keyboard
 enum FingerState { UP, OFF, DOWN };
 
-/// I miss real C++
+/// I miss real C++. (T_T)
 struct ChordKeyPair {
   String first;
   int second;
@@ -41,6 +39,7 @@ struct ChordKeyPair {
 struct Chord {
   FingerState pinky, ring, middle, pointer, thumb;
 
+  /// Load from a string
   static Chord from_str(const String &_s) {
     Chord out;
     out.pinky = _s[0] == 'U' ? UP : _s[0] == 'D' ? DOWN : OFF;
@@ -51,8 +50,14 @@ struct Chord {
     return out;
   }
 
-#ifdef NOT_ARDUINO
+  /// Encode into an int
+  int to_int() const {
+    return thumb + 3 * (pointer +
+                        3 * (middle + 3 * (ring + 3 * pinky)));
+  }
 
+#ifdef NOT_ARDUINO
+  /// Encode into a string
   String to_string() const noexcept {
     String out;
     out.push_back("U0D"[pinky]);
@@ -63,9 +68,8 @@ struct Chord {
     return out;
   }
 
-#endif
-
-  static Chord from_int(const size_t &_i) {
+  /// Load from an encode int
+  static Chord from_int(const int &_i) {
     size_t i = _i;
     Chord out;
     out.thumb = static_cast<FingerState>(i % 3);
@@ -79,11 +83,7 @@ struct Chord {
     out.pinky = static_cast<FingerState>(i % 3);
     return out;
   }
-
-  int to_int() const {
-    return thumb + 3 * (pointer +
-                        3 * (middle + 3 * (ring + 3 * pinky)));
-  }
+#endif
 };
 
 /// A chorded keyboard schema
@@ -93,7 +93,8 @@ public:
   /// chord to its key. Do NOT include the null chord here!
   Schema(const ChordKeyPair *const _table, const size_t &_s) {
     for (size_t i = 0; i < _s; ++i) {
-      data[Chord::from_str(_table[i].first).to_int() - 1] = _table[i].second;
+      data[Chord::from_str(_table[i].first).to_int() - 1] =
+          _table[i].second;
     }
   }
 
@@ -107,31 +108,33 @@ public:
   }
 
 #ifdef NOT_ARDUINO
-
+  /// Load from a file
   static Schema from_file(const std::filesystem::path &_fp) {
     std::ifstream f(_fp);
     assert(f.is_open());
-    Schema out({});
+    Schema out(nullptr, 0);
     f.read((char *)&out.data, sizeof(out.data));
     return out;
   }
 
+  /// Write to a file
   void to_file(const std::filesystem::path &_fp) const {
     std::ofstream f(_fp);
     assert(f.is_open());
     f.write((char *)&data, sizeof(data));
   }
-
 #endif
 
+  /// The length of the data block
   const static size_t data_len = (3 * 3 * 3 * 3 * 3) - 1;
 
 protected:
-  // Treats the configuration as a 5-length ternary number, but
-  // subtracts 1 from it (since the null config is used).
+  /// Treats the configuration as a 5-length ternary number, but
+  /// subtracts 1 from it (since the null config is used).
   int data[data_len];
 };
 
+/// To load the default schema from
 const static ChordKeyPair l[] = {
     {"0000U", KEY_TAB},
     {"000UU", '8'},
@@ -182,4 +185,5 @@ const static ChordKeyPair l[] = {
     {"DD00D", 'l'},
 };
 
+/// The default schema
 const static Schema default_schema(l, sizeof(l) / sizeof(l[0]));
