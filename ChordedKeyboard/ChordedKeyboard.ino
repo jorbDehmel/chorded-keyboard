@@ -15,7 +15,6 @@ const static int pointer_up_pin = 0;
 const static int pointer_down_pin = 0;
 const static int thumb_up_pin = 0;
 const static int thumb_down_pin = 0;
-const static int light_pin = 0;
 
 void setup() {
   pinMode(pinky_up_pin, INPUT_PULLUP);
@@ -28,8 +27,6 @@ void setup() {
   pinMode(pointer_down_pin, INPUT_PULLUP);
   pinMode(thumb_up_pin, INPUT_PULLUP);
   pinMode(thumb_down_pin, INPUT_PULLUP);
-
-  pinMode(light_pin, OUTPUT);
   Keyboard.begin();
 }
 
@@ -37,7 +34,6 @@ void loop() {
   Chord state;
   state.pinky = state.ring = state.middle = state.pointer =
       state.thumb = OFF;
-
   if (digitalRead(pinky_up_pin) == HIGH) {
     state.pinky = UP;
   } else if (digitalRead(pinky_down_pin) == HIGH) {
@@ -65,11 +61,11 @@ void loop() {
   }
 
   const int key = default_schema.get_key(state);
-  if (key > 0) {
-    digitalWrite(light_pin, HIGH);
+  if (key == MULTIKEY) {
+    Keyboard.print(default_schema.multikey(state));
+  } else if (key > 0) {
     Keyboard.press(key);
   } else {
-    digitalWrite(light_pin, LOW);
     Keyboard.releaseAll();
   }
 }

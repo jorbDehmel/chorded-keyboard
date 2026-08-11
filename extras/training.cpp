@@ -5,6 +5,12 @@
 #include <iostream>
 #include <random>
 
+bool operator==(const Chord &_a, const Chord &_b) {
+  return _a.thumb == _b.thumb && _a.pointer == _b.pointer &&
+         _a.middle == _b.middle && _a.ring == _b.ring &&
+         _a.pinky == _b.pinky;
+}
+
 bool right_handed_mode = false;
 
 void print_chord(const Chord &_c) {
@@ -131,6 +137,30 @@ int main(int c, char *v[]) {
   const Schema s =
       saw_fp ? Schema::from_file(fp) : default_schema;
 
+  if (!saw_fp) {
+    // Verify default schema
+    for (size_t i = 0; i < sizeof(l) / sizeof(l[0]); ++i) {
+      const std::string str = l[i].first;
+      const int k = l[i].second;
+      const int obs = s.get_key(Chord::from_str(str));
+      assert(obs == k);
+    }
+  }
+
+  // Print empty chords
+  for (size_t i = 0; i < s.data_len; ++i) {
+    const Chord c = Chord::from_int(i);
+    assert(c == Chord::from_int(c.to_int()));
+    assert(c == Chord::from_str(c.to_string()));
+    if (c.thumb == OFF) {
+      continue;
+    }
+    if (s.get_key(c) == 0) {
+      std::cout << c.to_string() << " is 0\n";
+    }
+  }
+  std::cout << '\n';
+
   // Note: This is inclusive on both sides
   std::uniform_int_distribution<size_t> range(1,
                                               Schema::data_len);
@@ -148,7 +178,11 @@ int main(int c, char *v[]) {
 
     std::cout << '\n';
     print_chord(chord);
-    print_key(key);
+    if (key == MULTIKEY) {
+      std::cout << "String: " << s.multikey(chord) << '\n';
+    } else {
+      print_key(key);
+    }
 
     if (std::isprint(key)) {
       // Wait until the user inputs that key
