@@ -1,6 +1,8 @@
 // Firmware for a 10-key chorded keyboard
 // Jordan Dehmel, 2026, MIT license
 
+#define ARDUINO
+
 #include "schema.hpp"
 #include <Keyboard.h>
 

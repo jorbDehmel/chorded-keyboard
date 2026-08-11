@@ -6,9 +6,7 @@
 
 // Needed since we want to call this from both Arduino and real
 // C++
-#if not __has_include(<Keyboard.h>)
-#define NOT_ARDUINO
-#include <cassert>
+#ifndef ARDUINO
 #include <filesystem>
 #include <fstream>
 using String = std::string;
@@ -67,7 +65,7 @@ struct Chord {
 
   /// Encode into an int
   int to_int() const {
-    return thumb + 3 * (pointer +
+    return (thumb == UP ? 0 : 1) + 2 * (pointer +
                         3 * (middle + 3 * (ring + 3 * pinky)));
   }
 
@@ -87,8 +85,8 @@ struct Chord {
   static Chord from_int(const int &_i) {
     size_t i = _i;
     Chord out;
-    out.thumb = static_cast<FingerState>(i % 3);
-    i /= 3;
+    out.thumb = (i % 2 == 0 ? UP : DOWN);
+    i /= 2;
     out.pointer = static_cast<FingerState>(i % 3);
     i /= 3;
     out.middle = static_cast<FingerState>(i % 3);
@@ -141,7 +139,6 @@ public:
   /// Load from a file
   static Schema from_file(const std::filesystem::path &_fp) {
     std::ifstream f(_fp);
-    assert(f.is_open());
     Schema out(nullptr, 0, nullptr, 0);
     f.read((char *)&out.data, sizeof(out.data));
     f.read((char *)&out.data2, sizeof(out.data2));
@@ -151,14 +148,13 @@ public:
   /// Write to a file
   void to_file(const std::filesystem::path &_fp) const {
     std::ofstream f(_fp);
-    assert(f.is_open());
     f.write((char *)&data, sizeof(data));
     f.write((char *)&data2, sizeof(data2));
   }
 #endif
 
   /// The length of the data block
-  const static size_t data_len = 3 * 3 * 3 * 3 * 3;
+  const static size_t data_len = 2 * 3 * 3 * 3 * 3;
 
 protected:
   /// Treats the configuration as a 5-"digit" ternary number,
