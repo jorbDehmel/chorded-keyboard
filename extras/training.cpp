@@ -1,4 +1,5 @@
 #include "../ChordedKeyboard/schema.hpp"
+#include <cassert>
 #include <cctype>
 #include <cstdio>
 #include <filesystem>
