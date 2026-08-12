@@ -102,11 +102,12 @@ button (for instance, "`D00D D`" for "j"). These can be combined
 In addition to the 3D-printable STL files included in this
 directory, the following will be needed:
 
-- 10x unlabelled keycaps
-- 10x mechanical keyboard switches
-- 1x Arduino Leonardo (EG Pro Micro)
-- A bunch of wires
-- Soldering equipment
+- 10x unlabelled keycaps (~$5)
+- 10x mechanical keyboard switches (~$5)
+- 1x USB-C Arduino Leonardo (EG [Pro Micro](https://www.amazon.com/gp/product/B0B81FGBLY)) (~$15)
+- A bunch of wires (~$5)
+- Soldering equipment (~$20)
+- Optional grip tape (EG [this](https://www.amazon.com/Rubber-Strips-Solid-Sheets-Thick/dp/B0DDQG6J5F)) (~$10)
 
 The arduino must have at least 10 input pins, at least 1 ground
 pin, and support HID and the `INPUT_PULLUP` mode. Make sure
@@ -128,6 +129,12 @@ The pieces should slot together like this:
 
 ![](images/assembled.png)
 
+Printing these two parts via PCBWay cost me about $10. If you
+start with absolutely nothing, this should cost about $60 to
+make. If you already have a 3D printer, soldering equipment,
+and wires, it should cost about $25. The arduino will be
+soldered to, so you should use one you don't expect back.
+
 The design is intended to (poorly) mimic my Logitech MX Ergo
 upright trackball mouse, which I love dearly and highly
 recommend for anyone who works with computers. The base is
@@ -142,8 +149,9 @@ TODO
 
 First, figure out what pins you will use. This uses 1 pin per
 key: **Not** a matrix system, for chording reasons. There will
-be 10 pins used overall. Edit `ChordedKeyboard.ino` as needed.
-If you want to change the schema, you can do that there as well.
+be 10 pins used overall. **Edit `generate_arduino.py`** to add
+them, then run that script. If you want to edit the schema, you
+can use this script to do so.
 
 Next, connect your **HID-compatible** arduino and upload the
 sketch. This document details a corded chorded keyboard, which
