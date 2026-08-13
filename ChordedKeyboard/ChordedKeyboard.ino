@@ -5,16 +5,16 @@ struct Chord {
   FingerState pinky = OFF, ring = OFF, middle = OFF,
               pointer = OFF, thumb = OFF;
 };
-const static int pinky_up_pin = 0;
-const static int pinky_down_pin = 0;
-const static int ring_up_pin = 0;
-const static int ring_down_pin = 0;
-const static int middle_up_pin = 0;
-const static int middle_down_pin = 0;
-const static int pointer_up_pin = 0;
-const static int pointer_down_pin = 0;
-const static int thumb_up_pin = 0;
-const static int thumb_down_pin = 0;
+const static int pinky_up_pin = 1;
+const static int pinky_down_pin = 2;
+const static int ring_up_pin = 3;
+const static int ring_down_pin = 4;
+const static int middle_up_pin = 5;
+const static int middle_down_pin = 6;
+const static int pointer_up_pin = 7;
+const static int pointer_down_pin = 8;
+const static int thumb_up_pin = 9;
+const static int thumb_down_pin = 10;
 void setup() {
   pinMode(pinky_up_pin, INPUT_PULLUP);
   pinMode(pinky_down_pin, INPUT_PULLUP);

@@ -15,7 +15,16 @@ def generate_arduino_sketch(sketch_name: str,
                             ) -> None:
     """
     Make an arduino sketch in the current directory with the
-    given chorded keyboard schema
+    given chorded keyboard schema.
+    :param sketch_name: The arduino sketch's name. This will be
+        a folder in the directory the script is run in.
+    :param schema: A dictionary mapping chords of form ABCDE,
+        where each A, B, C, D, and E is a single character
+        either 0, U, or D, to the string that should be output
+        upon that chord being pressed.
+    :param pins: A dictionary mapping pin names (EG
+        "pinky_up_pin", "thumb_down_pin") to their arduino
+        INPUT_PULLUP pin.
     """
     fingers = [
         'pinky', 'ring', 'middle', 'pointer', 'thumb'
@@ -26,6 +35,7 @@ def generate_arduino_sketch(sketch_name: str,
         for finger in fingers
         for state in ['up', 'down']
     ]
+    assert len(pins) == 10, 'Wrong number of pin pairs provided'
     for pin in required_pins:
         assert pin in pins, f'Missing {pin}'
 
@@ -154,6 +164,7 @@ def generate_arduino_sketch(sketch_name: str,
 
 
 if __name__ == '__main__':
+    # Begin part you should edit
     default_schema = {
         '0000U': 'KEY_TAB',
         '000UU': '8',
@@ -259,20 +270,22 @@ if __name__ == '__main__':
         'UDU0D': 'not',
         'UD0UD': 'or',
     }
+    pins = {
+        'pinky_up_pin': 1,
+        'pinky_down_pin': 2,
+        'ring_up_pin': 3,
+        'ring_down_pin': 4,
+        'middle_up_pin': 5,
+        'middle_down_pin': 6,
+        'pointer_up_pin': 7,
+        'pointer_down_pin': 8,
+        'thumb_up_pin': 9,
+        'thumb_down_pin': 10,
+    }
+    # End part you should edit
 
     generate_arduino_sketch(
         'ChordedKeyboard',
         default_schema,
-        {
-            'pinky_up_pin': 0,
-            'pinky_down_pin': 0,
-            'ring_up_pin': 0,
-            'ring_down_pin': 0,
-            'middle_up_pin': 0,
-            'middle_down_pin': 0,
-            'pointer_up_pin': 0,
-            'pointer_down_pin': 0,
-            'thumb_up_pin': 0,
-            'thumb_down_pin': 0,
-        }
+        pins
     )

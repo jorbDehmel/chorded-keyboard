@@ -6,7 +6,7 @@ Jordan Dehmel, 2026, MIT license
 ## About
 
 This is a 10-key, one-handed chorded USB-C keyboard using a
-scheme I made up. Each finger is responsible for two buttons:
+scheme I made up. Each finger is responsible for two keys:
 up and down. Only one is expected to be pressed down at a time.
 Therefore, each of the 5 fingers has 3 states, leading to
 $3^5 = 243$ combinations ($242$ if you don't count the empty
@@ -24,10 +24,11 @@ The encoding scheme is really a separate project for me, I've
 previously written drivers supporting it on QWERTY keyboards. I
 just thought it would be cool to have a real version. This
 keyboard is both chorded (each keystroke requires multiple
-buttons to be pressed) and corded (it is not bluetooth). If
-you're wondering why the pinky buttons are so low, my pinkies
-are just like that! They can't even reach the number row or
-backslash on a regular keyboard.
+keys to be pressed) and corded (it is not bluetooth).
+
+(If you're wondering why the pinky keys are so low, my
+pinkies are just like that! They can't even reach the number
+row or backslash on a regular keyboard.)
 
 ## The Schema
 
@@ -42,7 +43,7 @@ pointing to that character (for instance, "v" takes the chord
 "`00UD D`", corresponding to pressing "r" and "f" at the same
 time in QWERTY). For characters typed by the right hand in
 QWERTY, I usually have a non-adjacent finger press some lower
-button (for instance, "`D00D D`" for "j"). These can be combined
+key (for instance, "`D00D D`" for "j"). These can be combined
 (for instance, "`D0DD D`" for "h" based on "`00DD D`" for "g").
 
  Chord    | Character
@@ -97,6 +98,12 @@ button (for instance, "`D00D D`" for "j"). These can be combined
 
 ## The Physical Keyboard
 
+This section describes how to assemble the core keyboard. This
+is not ergonomic at all because it is intended to be modular.
+However, the main module is all I have designed so far! If you
+make any good ergonomic pieces, please let me know and/or pull
+request them to this repo, they would be greatly appreciated!
+
 ### Parts List
 
 In addition to the 3D-printable STL files included in this
@@ -141,17 +148,23 @@ recommend for anyone who works with computers. The base is
 designed to support a separate upright adapter in the same vein
 as that mouse.
 
-### Step 1: Assembling Keycaps
+### Step 1: Assembling Keys
 
-TODO
+Slot the switches into the switch holes in the top casing. Make
+sure that they are all in the same orientation **before**
+slotting them in! The case is not designed to support removing
+switches. Leave the keycaps off for now, or don't- I'm not your
+mom.
 
 ### Step 2: Programming the Arduino
 
+**Make sure to edit in the values of your pins!**
+
 First, figure out what pins you will use. This uses 1 pin per
 key: **Not** a matrix system, for chording reasons. There will
-be 10 pins used overall. **Edit `generate_arduino.py`** to add
-them, then run that script. If you want to edit the schema, you
-can use this script to do so.
+be 10 data pins used overall. **Edit `generate_arduino.py`** to
+add them, then run that script. If you want to edit the schema,
+you can use this script to do so.
 
 Next, connect your **HID-compatible** arduino and upload the
 sketch. This document details a corded chorded keyboard, which
@@ -161,15 +174,20 @@ could easily use one to make a wireless version).
 
 ### Step 3: Soldering
 
+Solder all the neutral pins of the keys together and to the
+ground pin of the arduino. There should now be one pin remaining
+on each switch. Solder a wire from each of these to a **unique**
+digital input pin on the arduino (consult your board's pinout).
 **Make sure you use the same pins you configured in step 2!**
+Also ensure that no two keys are wired to the same arduino
+input: They must be different. There should be a total of 11
+wires soldered to your arduino: 1 ground and 10 data.
 
-TODO
+### Step 4: Testing and keycaps
 
-### Step 4: Testing
-
-Before you seal it up, connect your arduino to a computer and
-make sure all your joints are good. Test out the chording schema
-while you're at it!
+Before you seal it up, connect your arduino to a computer, put
+on the keycaps, and make sure all your joints are good. Test out
+the chording schema while you're at it!
 
 ### Step 5: Final assembly
 
@@ -181,8 +199,4 @@ Now everything should be assembled in the upper case. The only
 step remaining is to attach the 2 lower case components. You can
 use glue if you don't mind replacing case parts every time you
 need to open it, or you can use some heat-set threaded inserts
-if you want more serviceability. This is a hobby project for me
-and it doesn't contain any batteries or internal moving parts,
-so I didn't put much effort into user serviceability. I'm also
-very new to OpenSCAD, so leaving the design simple made more
-sense.
+if you want more serviceability.
