@@ -5,16 +5,16 @@ struct Chord {
   FingerState pinky = OFF, ring = OFF, middle = OFF,
               pointer = OFF, thumb = OFF;
 };
-const static int pinky_up_pin = 1;
-const static int pinky_down_pin = 2;
-const static int ring_up_pin = 3;
-const static int ring_down_pin = 4;
-const static int middle_up_pin = 5;
-const static int middle_down_pin = 6;
-const static int pointer_up_pin = 7;
-const static int pointer_down_pin = 8;
-const static int thumb_up_pin = 9;
-const static int thumb_down_pin = 10;
+const static int pinky_up_pin = 16;
+const static int pinky_down_pin = 10;
+const static int ring_up_pin = 15;
+const static int ring_down_pin = 14;
+const static int middle_up_pin = 3;
+const static int middle_down_pin = 4;
+const static int pointer_up_pin = 5;
+const static int pointer_down_pin = 6;
+const static int thumb_up_pin = 8;
+const static int thumb_down_pin = 9;
 void setup() {
   pinMode(pinky_up_pin, INPUT_PULLUP);
   pinMode(pinky_down_pin, INPUT_PULLUP);
@@ -30,31 +30,32 @@ void setup() {
 }
 void loop() {
   Chord state;
-  if (digitalRead(pinky_up_pin) == HIGH) {
+  if (digitalRead(pinky_up_pin) == LOW) {
     state.pinky = UP;
-  } else if (digitalRead(pinky_down_pin) == HIGH) {
+  } else if (digitalRead(pinky_down_pin) == LOW) {
     state.pinky = DOWN;
   }
-  if (digitalRead(ring_up_pin) == HIGH) {
+  if (digitalRead(ring_up_pin) == LOW) {
     state.ring = UP;
-  } else if (digitalRead(ring_down_pin) == HIGH) {
+  } else if (digitalRead(ring_down_pin) == LOW) {
     state.ring = DOWN;
   }
-  if (digitalRead(middle_up_pin) == HIGH) {
+  if (digitalRead(middle_up_pin) == LOW) {
     state.middle = UP;
-  } else if (digitalRead(middle_down_pin) == HIGH) {
+  } else if (digitalRead(middle_down_pin) == LOW) {
     state.middle = DOWN;
   }
-  if (digitalRead(pointer_up_pin) == HIGH) {
+  if (digitalRead(pointer_up_pin) == LOW) {
     state.pointer = UP;
-  } else if (digitalRead(pointer_down_pin) == HIGH) {
+  } else if (digitalRead(pointer_down_pin) == LOW) {
     state.pointer = DOWN;
   }
-  if (digitalRead(thumb_up_pin) == HIGH) {
+  if (digitalRead(thumb_up_pin) == LOW) {
     state.thumb = UP;
-  } else if (digitalRead(thumb_down_pin) == HIGH) {
+  } else if (digitalRead(thumb_down_pin) == LOW) {
     state.thumb = DOWN;
   } else {
+    Keyboard.releaseAll();
     return;
   }
   if (state.pinky == UP) {
@@ -420,9 +421,9 @@ void loop() {
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
-            Keyboard.press('m');
-          } else if (state.thumb == DOWN) {
             Keyboard.press('^');
+          } else if (state.thumb == DOWN) {
+            Keyboard.press('m');
           }
         }
       } else if (state.middle == OFF) {

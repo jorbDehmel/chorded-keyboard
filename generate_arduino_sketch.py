@@ -70,13 +70,13 @@ def generate_arduino_sketch(sketch_name: str,
         f.write('void loop() {\nChord state;\n')
         for finger in fingers:
             f.write(
-                f'if (digitalRead({finger}_up_pin) == HIGH) '
+                f'if (digitalRead({finger}_up_pin) == LOW) '
                 '{ state.' + finger + ' = UP; } else if ('
-                f'digitalRead({finger}_down_pin) == HIGH)'
+                f'digitalRead({finger}_down_pin) == LOW)'
                 ' { state.' + finger + ' = DOWN; }\n'
             )
             if finger == 'thumb':
-                f.write('else { return; }\n')
+                f.write('else { Keyboard.releaseAll(); return; }\n')
 
         # Schema
         for pinky in ['UP', 'OFF', 'DOWN']:
@@ -212,7 +212,7 @@ if __name__ == '__main__':
         'D0DDD': 'h',
         'DU00D': 'o',
         'DUD0D': 'n',
-        '0DUDU': 'm',
+        '0DUDD': 'm',
         'DD00D': 'l',
         'UUUUD': '|',
         'UUUDD': '[',
@@ -230,7 +230,7 @@ if __name__ == '__main__':
         '0U0UD': '=',
         '0UDDD': '+',
         '0DUUD': '*',
-        '0DUDD': '^',
+        '0DUDU': '^',
         '0DDUD': '>',
         '0DD0D': '_',
         'DUUUD': '{',
@@ -271,16 +271,16 @@ if __name__ == '__main__':
         'UD0UD': 'or',
     }
     pins = {
-        'pinky_up_pin': 1,
-        'pinky_down_pin': 2,
-        'ring_up_pin': 3,
-        'ring_down_pin': 4,
-        'middle_up_pin': 5,
-        'middle_down_pin': 6,
-        'pointer_up_pin': 7,
-        'pointer_down_pin': 8,
-        'thumb_up_pin': 9,
-        'thumb_down_pin': 10,
+        'pinky_up_pin': 16,
+        'pinky_down_pin': 10,
+        'ring_up_pin': 15,
+        'ring_down_pin': 14,
+        'middle_up_pin': 3,
+        'middle_down_pin': 4,
+        'pointer_up_pin': 5,
+        'pointer_down_pin': 6,
+        'thumb_up_pin': 8,
+        'thumb_down_pin': 9,
     }
     # End part you should edit
 
