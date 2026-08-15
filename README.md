@@ -117,8 +117,9 @@ directory, the following will be needed:
 - Optional grip tape (EG [this](https://www.amazon.com/Rubber-Strips-Solid-Sheets-Thick/dp/B0DDQG6J5F)) (~$10)
 
 The arduino must have at least 10 input pins, at least 1 ground
-pin, and support HID and the `INPUT_PULLUP` mode. Make sure
-your arduino is compatible before going any further!
+pin, and support HID and the `INPUT_PULLUP` mode. It also must
+be compatible with `Keyboard.h`, which not all boards are! Make
+sure your arduino is compatible before going any further!
 
 Also, obtain copies of the included STL parts. They should be
 oriented in decent 3D-printing positions, but you will probably
@@ -136,11 +137,12 @@ The pieces should slot together like this:
 
 ![](images/assembled.png)
 
-Printing these two parts via PCBWay cost me about $10. If you
-start with absolutely nothing, this should cost about $60 to
-make. If you already have a 3D printer, soldering equipment,
-and wires, it should cost about $25. The arduino will be
-soldered to, so you should use one you don't expect back.
+Printing these two parts via my university cost me about $5. If
+you start with absolutely nothing, the entire project should
+cost about $60 to make. If you already have a 3D printer,
+soldering equipment, and wires, it should cost about $25. The
+arduino will be soldered to, so you should use one you don't
+expect back.
 
 The design is intended to (poorly) mimic my Logitech MX Ergo
 upright trackball mouse, which I love dearly and highly
@@ -183,6 +185,13 @@ Also ensure that no two keys are wired to the same arduino
 input: They must be different. There should be a total of 11
 wires soldered to your arduino: 1 ground and 10 data.
 
+![](images/partially_soldered.jpg)
+
+![](images/soldered_with_board.jpg)
+
+(please ignore my sloppy soldering, I bought a soldering iron
+and learned to use it for this)
+
 ### Step 4: Testing and keycaps
 
 Before you seal it up, connect your arduino to a computer, put
@@ -200,3 +209,7 @@ step remaining is to attach the 2 lower case components. You can
 use glue if you don't mind replacing case parts every time you
 need to open it, or you can use some heat-set threaded inserts
 if you want more serviceability.
+
+![](images/complete.jpg)
+
+Quite a sleek little unit!

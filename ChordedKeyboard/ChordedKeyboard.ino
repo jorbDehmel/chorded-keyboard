@@ -26,6 +26,8 @@ void setup() {
   pinMode(pointer_down_pin, INPUT_PULLUP);
   pinMode(thumb_up_pin, INPUT_PULLUP);
   pinMode(thumb_down_pin, INPUT_PULLUP);
+  pinMode(LED_BUILTIN_TX, INPUT);
+  pinMode(LED_BUILTIN_RX, INPUT);
   Keyboard.begin();
 }
 void loop() {
@@ -102,6 +104,7 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("gr");
+            Keyboard.releaseAll();
           }
         }
       } else if (state.middle == DOWN) {
@@ -215,6 +218,7 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("not");
+            Keyboard.releaseAll();
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
@@ -232,6 +236,7 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("or");
+            Keyboard.releaseAll();
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
@@ -246,12 +251,14 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("for");
+            Keyboard.releaseAll();
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             Keyboard.print("thr");
+            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.press(')');
           }
@@ -261,6 +268,7 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("while");
+            Keyboard.releaseAll();
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
@@ -316,6 +324,7 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("if");
+            Keyboard.releaseAll();
           }
         }
       } else if (state.middle == DOWN) {
@@ -325,6 +334,7 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("let");
+            Keyboard.releaseAll();
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
@@ -433,6 +443,7 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("let");
+            Keyboard.releaseAll();
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
@@ -446,6 +457,7 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("const");
+            Keyboard.releaseAll();
           }
         }
       } else if (state.middle == DOWN) {
@@ -494,6 +506,7 @@ void loop() {
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             Keyboard.print("the");
+            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.press('(');
           }
@@ -502,6 +515,7 @@ void loop() {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             Keyboard.print("ou");
+            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             // DU0UD is unused
             Keyboard.releaseAll();
@@ -519,12 +533,14 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("ow");
+            Keyboard.releaseAll();
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             Keyboard.print("tr");
+            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.press('~');
           }
@@ -538,6 +554,7 @@ void loop() {
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             Keyboard.print("ch");
+            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.press('z');
           }
@@ -559,6 +576,7 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("ng");
+            Keyboard.releaseAll();
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
@@ -584,6 +602,7 @@ void loop() {
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             Keyboard.print("ai");
+            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.press('j');
           }
@@ -592,6 +611,7 @@ void loop() {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             Keyboard.print("th");
+            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.press('y');
           }
@@ -633,6 +653,7 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("in");
+            Keyboard.releaseAll();
           }
         }
       } else if (state.middle == OFF) {
@@ -657,18 +678,21 @@ void loop() {
             Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.print("nd");
+            Keyboard.releaseAll();
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             Keyboard.print("sh");
+            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.press(']');
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             Keyboard.print("and");
+            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             Keyboard.press('&');
           }
@@ -677,6 +701,7 @@ void loop() {
             Keyboard.press(KEY_CAPS_LOCK);
           } else if (state.thumb == DOWN) {
             Keyboard.print("ing");
+            Keyboard.releaseAll();
           }
         }
       }

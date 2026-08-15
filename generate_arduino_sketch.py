@@ -64,6 +64,11 @@ def generate_arduino_sketch(sketch_name: str,
         f.write('void setup() {\n')
         for pin in required_pins:
             f.write(f'pinMode({pin}, INPUT_PULLUP);\n')
+
+        # Turn off those red LEDs
+        f.write('pinMode(LED_BUILTIN_TX, INPUT);\n')
+        f.write('pinMode(LED_BUILTIN_RX, INPUT);\n')
+
         f.write('Keyboard.begin();\n}\n')
 
         # Loop
@@ -133,6 +138,9 @@ def generate_arduino_sketch(sketch_name: str,
                                     f.write(
                                         'Keyboard.print("'
                                         f'{value}");\n'
+                                        # Keep it from spamming
+                                        'Keyboard.'
+                                        'releaseAll();\n'
                                     )
 
                             else:
