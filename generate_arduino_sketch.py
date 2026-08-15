@@ -9,6 +9,19 @@ import subprocess
 from typing import Dict
 
 
+# Keys which are to be held down until the next key
+hold_down_keys = [
+    'KEY_LEFT_CTRL',
+    'KEY_LEFT_SHIFT',
+    'KEY_LEFT_ALT',
+    'KEY_LEFT_GUI',
+    'KEY_RIGHT_CTRL',
+    'KEY_RIGHT_SHIFT',
+    'KEY_RIGHT_ALT',
+    'KEY_RIGHT_GUI',
+]
+
+
 def generate_arduino_sketch(sketch_name: str,
                             schema: Dict[str, str],
                             pins: Dict[str, str] = None
@@ -72,6 +85,8 @@ def generate_arduino_sketch(sketch_name: str,
         f.write('Keyboard.begin();\n}\n')
 
         # Loop
+        f.write('bool holding = false;\n')
+        f.write('bool post_compound = false;\n')
         f.write('void loop() {\nChord state;\n')
         for finger in fingers:
             f.write(
@@ -81,7 +96,14 @@ def generate_arduino_sketch(sketch_name: str,
                 ' { state.' + finger + ' = DOWN; }\n'
             )
             if finger == 'thumb':
-                f.write('else { Keyboard.releaseAll(); return; }\n')
+                f.write(
+                    'else { if (!holding) { '
+                    'Keyboard.releaseAll(); } '
+                    'if (post_compound) { '
+                    'post_compound = false; } return; }\n'
+                )
+
+        f.write('if (post_compound) { return; }\n')
 
         # Schema
         for pinky in ['UP', 'OFF', 'DOWN']:
@@ -113,6 +135,7 @@ def generate_arduino_sketch(sketch_name: str,
                             )
 
                             if chord in schema:
+                                f.write(f'// {chord}\n')
                                 value = schema[chord]
                                 if len(value) == 1:
                                     # Single char
@@ -124,6 +147,7 @@ def generate_arduino_sketch(sketch_name: str,
                                                 '\'', '\\'
                                             ] else value
                                         ) + '\');\n'
+                                        'holding = false;\n'
                                     )
 
                                 elif value.startswith('KEY_'):
@@ -133,20 +157,24 @@ def generate_arduino_sketch(sketch_name: str,
                                         f'{value});\n'
                                     )
 
+                                    if value in hold_down_keys:
+                                        f.write(
+                                            'holding = true;'
+                                        )
+
                                 else:
                                     # Compound chord
                                     f.write(
                                         'Keyboard.print("'
                                         f'{value}");\n'
-                                        # Keep it from spamming
-                                        'Keyboard.'
-                                        'releaseAll();\n'
+                                        'holding = false;\n'
+                                        'post_compound = '
+                                        'true;\n'
                                     )
 
                             else:
                                 f.write(
                                     f'// {chord} is unused\n'
-                                    'Keyboard.releaseAll();\n'
                                 )
 
                             f.write('}\n')
@@ -175,33 +203,37 @@ if __name__ == '__main__':
     # Begin part you should edit
     default_schema = {
         '0000U': 'KEY_TAB',
-        '000UU': '8',
         '000DU': 'KEY_RIGHT_ARROW',
-        '00U0U': '4',
         '00D0U': 'KEY_UP_ARROW',
-        '0U00U': '2',
-        '0UU0U': '6',
         '0D00U': 'KEY_DOWN_ARROW',
         '0DD0U': 'KEY_HOME',
+        'UUUUU': 'KEY_ESC',
+        'D000U': 'KEY_LEFT_ARROW',
+        'DDDDU': 'KEY_CAPS_LOCK',
+        '00UUD': 'KEY_RETURN',
+        '0UU0D': 'KEY_BACKSPACE',
+        'DU00U': 'KEY_LEFT_CTRL',
+        'DD00U': 'KEY_LEFT_SHIFT',
+        '0DU0U': 'KEY_LEFT_ALT',
+        '0UDUU': 'KEY_LEFT_GUI',
+        '000UU': '8',
+        '00U0U': '4',
+        '0U00U': '2',
+        '0UU0U': '6',
         'U000U': '1',
         'U00UU': '9',
         'U0U0U': '5',
         'UU00U': '3',
         'UUU0U': '7',
-        'UUUUU': 'KEY_ESC',
-        'D000U': 'KEY_LEFT_ARROW',
-        'DDDDU': 'KEY_CAPS_LOCK',
         '0000D': ' ',
         '000UD': 'r',
         '000DD': 'f',
         '00U0D': 'e',
-        '00UUD': 'KEY_RETURN',
         '00UDD': 'v',
         '00D0D': 'd',
         '00DUD': 't',
         '00DDD': 'g',
         '0U00D': 'w',
-        '0UU0D': 'KEY_BACKSPACE',
         '0UUUD': '0',
         '0UD0D': 'c',
         '0D00D': 's',
@@ -213,7 +245,6 @@ if __name__ == '__main__':
         'D00UD': 'u',
         'D00DD': 'j',
         '0DU0D': 'i',
-        '0DU0U': 'I',
         'D0UDD': 'b',
         'D0D0D': 'k',
         'D0DUD': 'y',
@@ -277,6 +308,7 @@ if __name__ == '__main__':
         '0D0DD': 'const',
         'UDU0D': 'not',
         'UD0UD': 'or',
+        'U0DUD': 'qu',
     }
     pins = {
         'pinky_up_pin': 16,

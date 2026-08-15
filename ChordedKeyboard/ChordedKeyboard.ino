@@ -30,6 +30,8 @@ void setup() {
   pinMode(LED_BUILTIN_RX, INPUT);
   Keyboard.begin();
 }
+bool holding = false;
+bool post_compound = false;
 void loop() {
   Chord state;
   if (digitalRead(pinky_up_pin) == LOW) {
@@ -57,7 +59,15 @@ void loop() {
   } else if (digitalRead(thumb_down_pin) == LOW) {
     state.thumb = DOWN;
   } else {
-    Keyboard.releaseAll();
+    if (!holding) {
+      Keyboard.releaseAll();
+    }
+    if (post_compound) {
+      post_compound = false;
+    }
+    return;
+  }
+  if (post_compound) {
     return;
   }
   if (state.pinky == UP) {
@@ -65,70 +75,81 @@ void loop() {
       if (state.middle == UP) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // UUUUU
             Keyboard.press(KEY_ESC);
           } else if (state.thumb == DOWN) {
+            // UUUUD
             Keyboard.press('|');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // UUU0U
             Keyboard.press('7');
+            holding = false;
           } else if (state.thumb == DOWN) {
             // UUU0D is unused
-            Keyboard.releaseAll();
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // UUUDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // UUUDD
             Keyboard.press('[');
+            holding = false;
           }
         }
       } else if (state.middle == OFF) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // UU0UU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // UU0UD
             Keyboard.press(';');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // UU00U
             Keyboard.press('3');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // UU00D
             Keyboard.press(',');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // UU0DU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // UU0DD
             Keyboard.print("gr");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // UUDUU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             // UUDUD is unused
-            Keyboard.releaseAll();
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // UUD0U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             // UUD0D is unused
-            Keyboard.releaseAll();
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
+            // UUDDU
             Keyboard.press('%');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // UUDDD
             Keyboard.press('/');
+            holding = false;
           }
         }
       }
@@ -137,69 +158,81 @@ void loop() {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // U0UUU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // U0UUD
             Keyboard.press('!');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // U0U0U
             Keyboard.press('5');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // U0U0D
             Keyboard.press('#');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // U0UDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // U0UDD
             Keyboard.press('?');
+            holding = false;
           }
         }
       } else if (state.middle == OFF) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // U00UU
             Keyboard.press('9');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // U00UD
             Keyboard.press(':');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // U000U
             Keyboard.press('1');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // U000D
             Keyboard.press('q');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // U00DU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // U00DD
             Keyboard.press('p');
+            holding = false;
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // U0DUU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
-            // U0DUD is unused
-            Keyboard.releaseAll();
+            // U0DUD
+            Keyboard.print("qu");
+            holding = false;
+            post_compound = true;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // U0D0U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             // U0D0D is unused
-            Keyboard.releaseAll();
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // U0DDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             // U0DDD is unused
-            Keyboard.releaseAll();
           }
         }
       }
@@ -208,74 +241,83 @@ void loop() {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // UDUUU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // UDUUD
             Keyboard.press('$');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // UDU0U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // UDU0D
             Keyboard.print("not");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // UDUDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             // UDUDD is unused
-            Keyboard.releaseAll();
           }
         }
       } else if (state.middle == OFF) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // UD0UU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // UD0UD
             Keyboard.print("or");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // UD00U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // UD00D
             Keyboard.press('x');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // UD0DU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // UD0DD
             Keyboard.print("for");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // UDDUU
             Keyboard.print("thr");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           } else if (state.thumb == DOWN) {
+            // UDDUD
             Keyboard.press(')');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // UDD0U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // UDD0D
             Keyboard.print("while");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // UDDDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // UDDDD
             Keyboard.press('}');
+            holding = false;
           }
         }
       }
@@ -286,69 +328,85 @@ void loop() {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // 0UUUU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // 0UUUD
             Keyboard.press('0');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // 0UU0U
             Keyboard.press('6');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // 0UU0D
             Keyboard.press(KEY_BACKSPACE);
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // 0UUDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // 0UUDD
             Keyboard.press('<');
+            holding = false;
           }
         }
       } else if (state.middle == OFF) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // 0U0UU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // 0U0UD
             Keyboard.press('=');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // 0U00U
             Keyboard.press('2');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // 0U00D
             Keyboard.press('w');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // 0U0DU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // 0U0DD
             Keyboard.print("if");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
-            // 0UDUU is unused
-            Keyboard.releaseAll();
+            // 0UDUU
+            Keyboard.press(KEY_LEFT_GUI);
+            holding = true;
           } else if (state.thumb == DOWN) {
+            // 0UDUD
             Keyboard.print("let");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // 0UD0U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // 0UD0D
             Keyboard.press('c');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // 0UDDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // 0UDDD
             Keyboard.press('+');
+            holding = false;
           }
         }
       }
@@ -356,61 +414,93 @@ void loop() {
       if (state.middle == UP) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // 00UUU
             Keyboard.press('-');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // 00UUD
             Keyboard.press(KEY_RETURN);
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // 00U0U
             Keyboard.press('4');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // 00U0D
             Keyboard.press('e');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
+            // 00UDU
             Keyboard.press('`');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // 00UDD
             Keyboard.press('v');
+            holding = false;
           }
         }
       } else if (state.middle == OFF) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // 000UU
             Keyboard.press('8');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // 000UD
             Keyboard.press('r');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // 0000U
             Keyboard.press(KEY_TAB);
           } else if (state.thumb == DOWN) {
+            // 0000D
             Keyboard.press(' ');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
+            // 000DU
             Keyboard.press(KEY_RIGHT_ARROW);
           } else if (state.thumb == DOWN) {
+            // 000DD
             Keyboard.press('f');
+            holding = false;
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // 00DUU
             Keyboard.press('\'');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // 00DUD
             Keyboard.press('t');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // 00D0U
             Keyboard.press(KEY_UP_ARROW);
           } else if (state.thumb == DOWN) {
+            // 00D0D
             Keyboard.press('d');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
+            // 00DDU
             Keyboard.press('"');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // 00DDD
             Keyboard.press('g');
+            holding = false;
           }
         }
       }
@@ -419,68 +509,84 @@ void loop() {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // 0DUUU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // 0DUUD
             Keyboard.press('*');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
-            Keyboard.press('I');
+            // 0DU0U
+            Keyboard.press(KEY_LEFT_ALT);
+            holding = true;
           } else if (state.thumb == DOWN) {
+            // 0DU0D
             Keyboard.press('i');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
+            // 0DUDU
             Keyboard.press('^');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // 0DUDD
             Keyboard.press('m');
+            holding = false;
           }
         }
       } else if (state.middle == OFF) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // 0D0UU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // 0D0UD
             Keyboard.print("let");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // 0D00U
             Keyboard.press(KEY_DOWN_ARROW);
           } else if (state.thumb == DOWN) {
+            // 0D00D
             Keyboard.press('s');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // 0D0DU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // 0D0DD
             Keyboard.print("const");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // 0DDUU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // 0DDUD
             Keyboard.press('>');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // 0DD0U
             Keyboard.press(KEY_HOME);
           } else if (state.thumb == DOWN) {
+            // 0DD0D
             Keyboard.press('_');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // 0DDDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             // 0DDDD is unused
-            Keyboard.releaseAll();
           }
         }
       }
@@ -491,72 +597,89 @@ void loop() {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // DUUUU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // DUUUD
             Keyboard.press('{');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // DUU0U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             // DUU0D is unused
-            Keyboard.releaseAll();
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
+            // DUUDU
             Keyboard.print("the");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           } else if (state.thumb == DOWN) {
+            // DUUDD
             Keyboard.press('(');
+            holding = false;
           }
         }
       } else if (state.middle == OFF) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // DU0UU
             Keyboard.print("ou");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           } else if (state.thumb == DOWN) {
             // DU0UD is unused
-            Keyboard.releaseAll();
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
-            // DU00U is unused
-            Keyboard.releaseAll();
+            // DU00U
+            Keyboard.press(KEY_LEFT_CTRL);
+            holding = true;
           } else if (state.thumb == DOWN) {
+            // DU00D
             Keyboard.press('o');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // DU0DU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // DU0DD
             Keyboard.print("ow");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // DUDUU
             Keyboard.print("tr");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           } else if (state.thumb == DOWN) {
+            // DUDUD
             Keyboard.press('~');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // DUD0U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // DUD0D
             Keyboard.press('n');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
+            // DUDDU
             Keyboard.print("ch");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           } else if (state.thumb == DOWN) {
+            // DUDDD
             Keyboard.press('z');
+            holding = false;
           }
         }
       }
@@ -565,69 +688,86 @@ void loop() {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // D0UUU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             // D0UUD is unused
-            Keyboard.releaseAll();
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // D0U0U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // D0U0D
             Keyboard.print("ng");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // D0UDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // D0UDD
             Keyboard.press('b');
+            holding = false;
           }
         }
       } else if (state.middle == OFF) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // D00UU
             Keyboard.press('@');
+            holding = false;
           } else if (state.thumb == DOWN) {
+            // D00UD
             Keyboard.press('u');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // D000U
             Keyboard.press(KEY_LEFT_ARROW);
           } else if (state.thumb == DOWN) {
+            // D000D
             Keyboard.press('a');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
+            // D00DU
             Keyboard.print("ai");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           } else if (state.thumb == DOWN) {
+            // D00DD
             Keyboard.press('j');
+            holding = false;
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // D0DUU
             Keyboard.print("th");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           } else if (state.thumb == DOWN) {
+            // D0DUD
             Keyboard.press('y');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // D0D0U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // D0D0D
             Keyboard.press('k');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // D0DDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // D0DDD
             Keyboard.press('h');
+            holding = false;
           }
         }
       }
@@ -636,72 +776,88 @@ void loop() {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // DDUUU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // DDUUD
             Keyboard.press('\\');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
             // DDU0U is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // DDU0D
             Keyboard.press('.');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // DDUDU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // DDUDD
             Keyboard.print("in");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         }
       } else if (state.middle == OFF) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
             // DD0UU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
             // DD0UD is unused
-            Keyboard.releaseAll();
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
-            // DD00U is unused
-            Keyboard.releaseAll();
+            // DD00U
+            Keyboard.press(KEY_LEFT_SHIFT);
+            holding = true;
           } else if (state.thumb == DOWN) {
+            // DD00D
             Keyboard.press('l');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
             // DD0DU is unused
-            Keyboard.releaseAll();
           } else if (state.thumb == DOWN) {
+            // DD0DD
             Keyboard.print("nd");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         }
       } else if (state.middle == DOWN) {
         if (state.pointer == UP) {
           if (state.thumb == UP) {
+            // DDDUU
             Keyboard.print("sh");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           } else if (state.thumb == DOWN) {
+            // DDDUD
             Keyboard.press(']');
+            holding = false;
           }
         } else if (state.pointer == OFF) {
           if (state.thumb == UP) {
+            // DDD0U
             Keyboard.print("and");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           } else if (state.thumb == DOWN) {
+            // DDD0D
             Keyboard.press('&');
+            holding = false;
           }
         } else if (state.pointer == DOWN) {
           if (state.thumb == UP) {
+            // DDDDU
             Keyboard.press(KEY_CAPS_LOCK);
           } else if (state.thumb == DOWN) {
+            // DDDDD
             Keyboard.print("ing");
-            Keyboard.releaseAll();
+            holding = false;
+            post_compound = true;
           }
         }
       }
