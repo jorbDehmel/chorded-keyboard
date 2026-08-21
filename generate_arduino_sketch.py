@@ -18,6 +18,7 @@ class ChordedKeyboardSchema:
         self.schema = schema
         self.pins = pins
         self.hold_down_keys = hold_down_keys
+        self.delay_ms = 10
 
     def generate_arduino_sketch(self, sketch_name: str) -> None:
         """
@@ -54,8 +55,8 @@ class ChordedKeyboardSchema:
                 'struct Chord { FingerState pinky = OFF, '
                 'ring = OFF, middle = OFF, pointer = OFF, '
                 'thumb = OFF; };\n'
-                'enum Mode { NORMAL, NO_CONFIRM, F, WASD }'
-                ' mode = NORMAL;\n'
+                'enum Mode { NORMAL, NO_CONFIRM, F, WASD, '
+                'ARROWS } mode = NORMAL;\n'
             )
 
             # Pin information
@@ -146,6 +147,7 @@ class ChordedKeyboardSchema:
                                         f.write(
                                             'mode = '
                                             f'{value[5:]};\n'
+                                            'delay(500);\n'
                                         )
 
                                     elif value.startswith(
@@ -196,6 +198,7 @@ class ChordedKeyboardSchema:
                 f.write('}\n')
                 if pinky != 'DOWN':
                     f.write(' else ')
+                f.write(f'delay({self.delay_ms});')
             f.write('}\n')  # End normal mode
 
             f.write('else if (mode == WASD) {\n')
@@ -203,20 +206,71 @@ class ChordedKeyboardSchema:
                 'if (state.pointer == BOTH && '
                 'state.middle == BOTH && '
                 'state.ring == BOTH && '
-                'state.pinky == BOTH) '
-                '{ mode = NORMAL; return; }'
+                'state.pinky == OFF && '
+                'state.thumb == OFF) '
+                '{ mode = NORMAL; delay(500); return; }'
             )
             for finger, (bot, top) in [('pointer',
-                                           ("'f'", "'r'")),
-                                       ('middle',
                                            ("'d'", "'e'")),
-                                       ('ring',
+                                       ('middle',
                                            ("'s'", "'w'")),
-                                       ('pinky',
+                                       ('ring',
                                            ("'a'", "'q'")),
+                                       ('pinky', (
+                                           "KEY_LEFT_CTRL",
+                                           "KEY_LEFT_SHIFT"
+                                        )),
                                        ('thumb', (
                                            "' '",
-                                           'KEY_LEFT_SHIFT'
+                                           'KEY_LEFT_ALT'
+                                        ))]:
+                f.write(
+                    f'switch (state.{finger}) '
+                    '{case UP: '
+                    f'Keyboard.press({top});'
+                    f'Keyboard.release({bot});'
+                    'break; case DOWN: '
+                    f'Keyboard.press({bot});'
+                    f'Keyboard.release({top});'
+                    'break; case BOTH: '
+                    f'Keyboard.press({bot});'
+                    f'Keyboard.press({top});'
+                    'break; case OFF: '
+                    f'Keyboard.release({bot});'
+                    f'Keyboard.release({top});'
+                    'break;}'
+                )
+            f.write('}\n')  # End wasd mode
+
+            # Arrows mode
+            f.write('else if (mode == ARROWS) {\n')
+            f.write(
+                'if (state.pointer == BOTH && '
+                'state.middle == BOTH && '
+                'state.ring == BOTH && '
+                'state.pinky == OFF && '
+                'state.thumb == OFF) '
+                '{ mode = NORMAL; delay(500); return; }'
+            )
+            for finger, (bot, top) in [('pointer', (
+                                            "KEY_RIGHT_ARROW",
+                                            "'e'"
+                                        )),
+                                       ('middle', (
+                                            "KEY_DOWN_ARROW",
+                                            "KEY_UP_ARROW"
+                                        )),
+                                       ('ring', (
+                                            "KEY_LEFT_ARROW",
+                                            "'q'"
+                                        )),
+                                       ('pinky', (
+                                           "KEY_LEFT_CTRL",
+                                           "KEY_LEFT_SHIFT"
+                                        )),
+                                       ('thumb', (
+                                           "' '",
+                                           'KEY_LEFT_ALT'
                                         ))]:
                 f.write(
                     f'switch (state.{finger}) '
@@ -237,7 +291,7 @@ class ChordedKeyboardSchema:
             f.write('}\n')  # End wasd mode
 
             # Invalid mode
-            f.write('else { mode = NORMAL; }\n')
+            f.write('else { Keyboard.print("invalid mode"); mode = NORMAL; }\n')
             f.write('}\n')
 
         # Attempt to format file
@@ -257,7 +311,10 @@ hold_down_keys = [
     'KEY_RIGHT_GUI',
 ]
 default_schema_dict = {
-    'BBBBB': 'MODE_WASD',
+    '0BBBU': 'MODE_WASD',
+    '0BBBD': 'MODE_ARROWS',
+    'BBBBU': 'MODE_NO_CONFIRM',
+    'B00BD': 'MODE_F',
     '0000U': 'KEY_TAB',
     '000DU': 'KEY_RIGHT_ARROW',
     '00D0U': 'KEY_UP_ARROW',

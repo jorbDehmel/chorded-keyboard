@@ -5,7 +5,7 @@ struct Chord {
   FingerState pinky = OFF, ring = OFF, middle = OFF,
               pointer = OFF, thumb = OFF;
 };
-enum Mode { NORMAL, NO_CONFIRM, F, WASD } mode = NORMAL;
+enum Mode { NORMAL, NO_CONFIRM, F, WASD, ARROWS } mode = NORMAL;
 const static int pinky_up_pin = 16;
 const static int pinky_down_pin = 10;
 const static int ring_up_pin = 15;
@@ -696,7 +696,9 @@ void loop() {
           }
         }
       }
-    } else if (state.pinky == OFF) {
+    } else
+      delay(10);
+    if (state.pinky == OFF) {
       if (state.ring == UP) {
         if (state.middle == UP) {
           if (state.pointer == UP) {
@@ -1118,11 +1120,15 @@ void loop() {
             }
           } else if (state.pointer == BOTH) {
             if (state.thumb == UP) {
-              // 0BBBU is unused
+              // 0BBBU
+              mode = WASD;
+              delay(500);
             } else if (state.thumb == BOTH) {
               // 0BBBB is unused
             } else if (state.thumb == DOWN) {
-              // 0BBBD is unused
+              // 0BBBD
+              mode = ARROWS;
+              delay(500);
             }
           } else if (state.pointer == DOWN) {
             if (state.thumb == UP) {
@@ -1331,7 +1337,9 @@ void loop() {
           }
         }
       }
-    } else if (state.pinky == BOTH) {
+    } else
+      delay(10);
+    if (state.pinky == BOTH) {
       if (state.ring == UP) {
         if (state.middle == UP) {
           if (state.pointer == UP) {
@@ -1528,7 +1536,9 @@ void loop() {
             } else if (state.thumb == BOTH) {
               // B00BB is unused
             } else if (state.thumb == DOWN) {
-              // B00BD is unused
+              // B00BD
+              mode = F;
+              delay(500);
             }
           } else if (state.pointer == DOWN) {
             if (state.thumb == UP) {
@@ -1696,10 +1706,11 @@ void loop() {
             }
           } else if (state.pointer == BOTH) {
             if (state.thumb == UP) {
-              // BBBBU is unused
+              // BBBBU
+              mode = NO_CONFIRM;
+              delay(500);
             } else if (state.thumb == BOTH) {
-              // BBBBB
-              mode = WASD;
+              // BBBBB is unused
             } else if (state.thumb == DOWN) {
               // BBBBD is unused
             }
@@ -1886,7 +1897,9 @@ void loop() {
           }
         }
       }
-    } else if (state.pinky == DOWN) {
+    } else
+      delay(10);
+    if (state.pinky == DOWN) {
       if (state.ring == UP) {
         if (state.middle == UP) {
           if (state.pointer == UP) {
@@ -2524,103 +2537,205 @@ void loop() {
         }
       }
     }
+    delay(10);
   } else if (mode == WASD) {
     if (state.pointer == BOTH && state.middle == BOTH &&
-        state.ring == BOTH && state.pinky == BOTH) {
+        state.ring == BOTH && state.pinky == OFF &&
+        state.thumb == OFF) {
       mode = NORMAL;
+      delay(500);
       return;
     }
     switch (state.pointer) {
     case UP:
-      Keyboard.press('r');
-      Keyboard.release('f');
+      Keyboard.press('e');
+      Keyboard.release('d');
       break;
     case DOWN:
-      Keyboard.press('f');
-      Keyboard.release('r');
+      Keyboard.press('d');
+      Keyboard.release('e');
       break;
     case BOTH:
-      Keyboard.press('f');
-      Keyboard.press('r');
+      Keyboard.press('d');
+      Keyboard.press('e');
       break;
     case OFF:
-      Keyboard.release('f');
-      Keyboard.release('r');
+      Keyboard.release('d');
+      Keyboard.release('e');
       break;
     }
     switch (state.middle) {
     case UP:
-      Keyboard.press('e');
-      Keyboard.release('d');
+      Keyboard.press('w');
+      Keyboard.release('s');
       break;
     case DOWN:
-      Keyboard.press('d');
-      Keyboard.release('e');
+      Keyboard.press('s');
+      Keyboard.release('w');
       break;
     case BOTH:
-      Keyboard.press('d');
-      Keyboard.press('e');
+      Keyboard.press('s');
+      Keyboard.press('w');
       break;
     case OFF:
-      Keyboard.release('d');
-      Keyboard.release('e');
+      Keyboard.release('s');
+      Keyboard.release('w');
       break;
     }
     switch (state.ring) {
     case UP:
-      Keyboard.press('w');
-      Keyboard.release('s');
+      Keyboard.press('q');
+      Keyboard.release('a');
       break;
     case DOWN:
-      Keyboard.press('s');
-      Keyboard.release('w');
+      Keyboard.press('a');
+      Keyboard.release('q');
       break;
     case BOTH:
-      Keyboard.press('s');
-      Keyboard.press('w');
+      Keyboard.press('a');
+      Keyboard.press('q');
       break;
     case OFF:
-      Keyboard.release('s');
-      Keyboard.release('w');
+      Keyboard.release('a');
+      Keyboard.release('q');
       break;
     }
     switch (state.pinky) {
     case UP:
-      Keyboard.press('q');
-      Keyboard.release('a');
+      Keyboard.press(KEY_LEFT_SHIFT);
+      Keyboard.release(KEY_LEFT_CTRL);
       break;
     case DOWN:
-      Keyboard.press('a');
-      Keyboard.release('q');
+      Keyboard.press(KEY_LEFT_CTRL);
+      Keyboard.release(KEY_LEFT_SHIFT);
       break;
     case BOTH:
-      Keyboard.press('a');
-      Keyboard.press('q');
+      Keyboard.press(KEY_LEFT_CTRL);
+      Keyboard.press(KEY_LEFT_SHIFT);
       break;
     case OFF:
-      Keyboard.release('a');
-      Keyboard.release('q');
+      Keyboard.release(KEY_LEFT_CTRL);
+      Keyboard.release(KEY_LEFT_SHIFT);
       break;
     }
     switch (state.thumb) {
     case UP:
-      Keyboard.press(KEY_LEFT_SHIFT);
+      Keyboard.press(KEY_LEFT_ALT);
       Keyboard.release(' ');
       break;
     case DOWN:
       Keyboard.press(' ');
-      Keyboard.release(KEY_LEFT_SHIFT);
+      Keyboard.release(KEY_LEFT_ALT);
       break;
     case BOTH:
       Keyboard.press(' ');
-      Keyboard.press(KEY_LEFT_SHIFT);
+      Keyboard.press(KEY_LEFT_ALT);
       break;
     case OFF:
       Keyboard.release(' ');
+      Keyboard.release(KEY_LEFT_ALT);
+      break;
+    }
+  } else if (mode == ARROWS) {
+    if (state.pointer == BOTH && state.middle == BOTH &&
+        state.ring == BOTH && state.pinky == OFF &&
+        state.thumb == OFF) {
+      mode = NORMAL;
+      delay(500);
+      return;
+    }
+    switch (state.pointer) {
+    case UP:
+      Keyboard.press('e');
+      Keyboard.release(KEY_RIGHT_ARROW);
+      break;
+    case DOWN:
+      Keyboard.press(KEY_RIGHT_ARROW);
+      Keyboard.release('e');
+      break;
+    case BOTH:
+      Keyboard.press(KEY_RIGHT_ARROW);
+      Keyboard.press('e');
+      break;
+    case OFF:
+      Keyboard.release(KEY_RIGHT_ARROW);
+      Keyboard.release('e');
+      break;
+    }
+    switch (state.middle) {
+    case UP:
+      Keyboard.press(KEY_UP_ARROW);
+      Keyboard.release(KEY_DOWN_ARROW);
+      break;
+    case DOWN:
+      Keyboard.press(KEY_DOWN_ARROW);
+      Keyboard.release(KEY_UP_ARROW);
+      break;
+    case BOTH:
+      Keyboard.press(KEY_DOWN_ARROW);
+      Keyboard.press(KEY_UP_ARROW);
+      break;
+    case OFF:
+      Keyboard.release(KEY_DOWN_ARROW);
+      Keyboard.release(KEY_UP_ARROW);
+      break;
+    }
+    switch (state.ring) {
+    case UP:
+      Keyboard.press('q');
+      Keyboard.release(KEY_LEFT_ARROW);
+      break;
+    case DOWN:
+      Keyboard.press(KEY_LEFT_ARROW);
+      Keyboard.release('q');
+      break;
+    case BOTH:
+      Keyboard.press(KEY_LEFT_ARROW);
+      Keyboard.press('q');
+      break;
+    case OFF:
+      Keyboard.release(KEY_LEFT_ARROW);
+      Keyboard.release('q');
+      break;
+    }
+    switch (state.pinky) {
+    case UP:
+      Keyboard.press(KEY_LEFT_SHIFT);
+      Keyboard.release(KEY_LEFT_CTRL);
+      break;
+    case DOWN:
+      Keyboard.press(KEY_LEFT_CTRL);
+      Keyboard.release(KEY_LEFT_SHIFT);
+      break;
+    case BOTH:
+      Keyboard.press(KEY_LEFT_CTRL);
+      Keyboard.press(KEY_LEFT_SHIFT);
+      break;
+    case OFF:
+      Keyboard.release(KEY_LEFT_CTRL);
       Keyboard.release(KEY_LEFT_SHIFT);
       break;
     }
+    switch (state.thumb) {
+    case UP:
+      Keyboard.press(KEY_LEFT_ALT);
+      Keyboard.release(' ');
+      break;
+    case DOWN:
+      Keyboard.press(' ');
+      Keyboard.release(KEY_LEFT_ALT);
+      break;
+    case BOTH:
+      Keyboard.press(' ');
+      Keyboard.press(KEY_LEFT_ALT);
+      break;
+    case OFF:
+      Keyboard.release(' ');
+      Keyboard.release(KEY_LEFT_ALT);
+      break;
+    }
   } else {
+    Keyboard.print("invalid mode");
     mode = NORMAL;
   }
 }
